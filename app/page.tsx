@@ -2,7 +2,7 @@ import Image from 'next/image'
 
 export default function Home() {
   const res =  {
-    app : "API Coklit Perumda Air Minum Tirta Dhaha Kota Kediri",
+    app : "Api PPOB Perumda Air Minum Bayuangga Kota Probolinggo",
     versi : "Versi 1.0"
   }
 
