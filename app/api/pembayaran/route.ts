@@ -243,7 +243,7 @@ export async function POST(req: NextRequest) {
       //  console.log(idRek);
       try {
 
-        const isBayar : number = await prismadb.$executeRaw`UPDATE drd SET flaglunas=1,tglbayar=${tgl[0].tgl},user_id=${isUser.id},nama_user=${isUser.nama},loket_id=${isUserLoket.loket_id},nama_loket=${isLoket.loket},denda=${dendatunggakan},meterai=${materai},admin_ppob=${admin_ppob},totalrekening=${total} WHERE id=${idRek}`;
+        const isBayar : number = await prismadb.$executeRaw`UPDATE drd SET flaglunas=1,tglbayar=${tgl[0].tgl},user_id=${isUser.id},nama_user=${isUser.nama},loket_id=${isUserLoket.loket_id},nama_loket=${isLoket.kodeloket},denda=${dendatunggakan},meterai=${materai},admin_ppob=${admin_ppob},totalrekening=${total} WHERE id=${idRek}`;
 
         // console.log(isBayar)
 
