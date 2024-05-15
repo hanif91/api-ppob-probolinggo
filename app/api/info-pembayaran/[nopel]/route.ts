@@ -32,7 +32,8 @@ export async function GET(req: NextRequest) {
 
     const isUser =  await prismadb.users.findUnique({
       where : {
-        username : userAuth
+        username : userAuth,
+        is_active : true
       }
     });
     
