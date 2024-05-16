@@ -86,7 +86,7 @@ model drd {
   denda           Int?      @default(0)
   angsuran        Int?      @default(0)
   angsuranke      Int?      @default(0) @db.SmallInt
-  ansguran_id     Int?
+  angsuran_id     Int?
   totalrekening   Int?      @default(0)
   tglbayar        DateTime? @db.DateTime(0)
   flaglunas       Int?      @default(0) @db.TinyInt
@@ -163,6 +163,72 @@ model golongan {
   @@index([idsktarif], map: "idsktarif")
 }
 
+model hisbatalair {
+  id             Int       @id @default(autoincrement())
+  drd_id         Int?
+  no_pelanggan   String?   @db.VarChar(20)
+  user_batal     String?   @db.VarChar(35)
+  alasanbatal    String?   @db.VarChar(100)
+  waktu          DateTime? @default(now()) @db.Timestamp(0)
+  tglbayar       DateTime? @db.DateTime(0)
+  nama_user      String?   @db.VarChar(50)
+  nama_loket     String?   @db.VarChar(50)
+  totalrekekning Int?
+
+  @@index([drd_id], map: "drd_id")
+  @@index([no_pelanggan], map: "no_pelanggan")
+}
+
+model hisbatalnonair {
+  id                Int       @id @default(autoincrement())
+  nonair_id         Int?
+  no_pembayaran     String?   @unique(map: "no_pembayaran") @db.VarChar(255)
+  tglbayar          DateTime? @db.DateTime(0)
+  jenisnonair_id    Int?
+  jenisnonair       String    @db.VarChar(5)
+  namajenis         String?   @db.VarChar(255)
+  nama              String    @db.VarChar(100)
+  alamat            String    @db.VarChar(200)
+  user_id           Int
+  nama_user         String?   @db.VarChar(75)
+  pendaftaranpel_id Int?
+  pelayananlain_id  Int?
+  pasangbaru_id     Int?
+  jumlah            Int       @default(0)
+  ppn               Int       @default(0)
+  total             Int       @default(0)
+  loket_id          Int?
+  kode_loket        String?   @db.VarChar(50)
+  nama_loket        String?   @db.VarChar(50)
+  angsuran_id       Int?
+  periode_agbjt     String?   @db.VarChar(6)
+  created_at        DateTime? @default(now()) @db.Timestamp(0)
+  updated_at        DateTime? @default(now()) @db.Timestamp(0)
+  flagproses        Int?      @default(0) @db.TinyInt
+  keterangan        String?   @db.VarChar(200)
+  alasanbatal       String?   @db.VarChar(100)
+  user_batal        String?   @db.VarChar(35)
+  waktu             DateTime? @default(now()) @db.Timestamp(0)
+
+  @@index([jenisnonair_id], map: "jenisnonair_id")
+  @@index([loket_id], map: "loket_id")
+  @@index([user_id], map: "user_id")
+}
+
+model hiskorrekening {
+  id           Int       @id @default(autoincrement())
+  drd_id       Int?
+  no_pelanggan String?   @db.VarChar(20)
+  user_koreksi String?   @db.VarChar(35)
+  waktu        DateTime? @default(now()) @db.Timestamp(0)
+  tglbayar     DateTime? @db.DateTime(0)
+  nama_user    String?   @db.VarChar(50)
+  nama_loket   String?   @db.VarChar(50)
+
+  @@index([drd_id], map: "drd_id")
+  @@index([no_pelanggan], map: "no_pelanggan")
+}
+
 model jalan {
   id         Int         @id @default(autoincrement())
   nama       String      @db.VarChar(255)
@@ -222,12 +288,13 @@ model kelurahan {
 }
 
 model kolektif {
-  id         Int         @id @default(autoincrement())
-  nama       String?     @db.VarChar(255)
-  telp       String?     @db.VarChar(255)
-  created_at DateTime?   @db.Timestamp(0)
-  updated_at DateTime?   @db.Timestamp(0)
-  pelanggan  pelanggan[]
+  id          Int         @id @default(autoincrement())
+  no_kolektif String?     @unique(map: "no_kolektif") @db.VarChar(35)
+  nama        String?     @db.VarChar(255)
+  telp        String?     @db.VarChar(255)
+  created_at  DateTime?   @db.Timestamp(0)
+  updated_at  DateTime?   @db.Timestamp(0)
+  pelanggan   pelanggan[]
 }
 
 model kolektif_pelanggan {
@@ -470,6 +537,7 @@ model penerimaan_nonair {
   nama              String        @db.VarChar(100)
   alamat            String        @db.VarChar(200)
   user_id           Int
+  nama_user         String?       @db.VarChar(75)
   pendaftaranpel_id Int?
   pelayananlain_id  Int?
   pasangbaru_id     Int?
@@ -596,6 +664,22 @@ model rayon {
   @@index([wilayah_id], map: "rayons_unit_id_foreign")
 }
 
+model rekon_mitra {
+  id             Int       @id @default(autoincrement())
+  startdate      DateTime? @db.Date
+  enddate        DateTime? @db.Date
+  user_id        Int?
+  namauser       String?   @db.VarChar(50)
+  data           Json?
+  flagverifikasi Boolean   @default(false)
+}
+
+model role {
+  id   Int     @id @default(autoincrement())
+  role String? @db.VarChar(50)
+  menu Json?
+}
+
 model setting {
   id                Int     @id
   lokalpathftp      String? @db.VarChar(256)
@@ -614,19 +698,20 @@ model setting {
 }
 
 model settingdesktop {
-  idx          Int     @id @db.SmallInt
-  mundurtglbyr Int?    @db.SmallInt
-  headerlap1   String? @db.VarChar(55)
-  headerlap2   String? @db.VarChar(55)
-  alamat1      String? @db.VarChar(100)
-  alamat2      String? @db.VarChar(100)
-  footerkota   String? @db.VarChar(45)
+  idx          Int      @id @db.SmallInt
+  mundurtglbyr Int?     @db.SmallInt
+  headerlap1   String?  @db.VarChar(55)
+  headerlap2   String?  @db.VarChar(55)
+  alamat1      String?  @db.VarChar(100)
+  alamat2      String?  @db.VarChar(100)
+  footerkota   String?  @db.VarChar(45)
+  stricpayment Boolean? @default(true)
 }
 
 model setup_denda {
   idx        Int      @id @default(autoincrement())
-  tgl1        Int?     @db.SmallInt
-  tgl2        Int?     @db.SmallInt
+  tgl1       Int?     @db.SmallInt
+  tgl2       Int?     @db.SmallInt
   flagpersen Boolean? @default(false)
   denda1     Int?
   denda2     Int?
@@ -693,7 +778,7 @@ model user_loket {
   users    users   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_loket_ibfk_1")
   loket    loket   @relation(fields: [loket_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_loket_ibfk_2")
 
-  @@unique([user_id, loket_id], name: "user_id_2")
+  @@unique([user_id, loket_id], name:"user_id_2")
   @@index([user_id], map: "user_id")
   @@index([loket_id], map: "user_loket_ibfk_2")
 }
@@ -715,9 +800,8 @@ model users {
   password                                                String              @db.Char(100)
   nama                                                    String              @db.Char(50)
   jabatan                                                 String              @db.Char(50)
-  role                                                    String              @db.Char(50)
+  role_id                                                 Int?
   is_user_ppob                                            Boolean
-  list_authorized_page                                    Json
   is_active                                               Boolean
   angsuran                                                angsuran[]
   pasangbaru_pasangbaru_user_inputTousers                 pasangbaru[]        @relation("pasangbaru_user_inputTousers")
@@ -738,16 +822,3 @@ model wilayah {
   pelanggan  pelanggan[]
   rayon      rayon[]
 }
-
-
-model rekon_mitra {
-  id       Int     @id @default(autoincrement())
-  startdate  DateTime? @db.Date
-  enddate  DateTime? @db.Date
-  user_id Int?
-  namauser    String?     @db.VarChar(50)
-  data    Json?
-  flagverifikasi Boolean @default(false)
-
-}
-
