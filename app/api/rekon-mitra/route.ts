@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
     const isUser =  await prismadb.users.findUnique({
       where : {
         username : userAuth,
+        is_user_ppob : true,
         is_active : true
       }
     });

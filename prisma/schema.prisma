@@ -136,6 +136,16 @@ model drd {
   @@index([wilayah_id], map: "wilayah_id")
 }
 
+model dump_kolektif {
+  id          Int       @id @default(autoincrement())
+  id_kol      Int?
+  no_kolektif String?   @unique(map: "no_kolektif") @db.VarChar(35)
+  nama        String?   @db.VarChar(255)
+  telp        String?   @db.VarChar(255)
+  created_at  DateTime? @db.Timestamp(0)
+  updated_at  DateTime? @db.Timestamp(0)
+}
+
 model golongan {
   id            Int          @id @default(autoincrement())
   kode_golongan String       @db.VarChar(10)
@@ -408,7 +418,7 @@ model pelanggan {
   diameter_id      Int
   kec_id           Int                @default(1)
   kel_id           Int                @default(1)
-  kolektif_id      Int                @default(0)
+  kolektif_id      Int?               @default(0)
   latitude         String?            @db.VarChar(35)
   longitude        String?            @db.VarChar(35)
   tgl_pasif        DateTime?          @db.Date
@@ -426,7 +436,7 @@ model pelanggan {
   kecamatan        kecamatan          @relation(fields: [kec_id], references: [id], map: "pelanggan_ibfk_6")
   kelurahan        kelurahan          @relation(fields: [kel_id], references: [id], map: "pelanggan_ibfk_7")
   merek_meters     merek_meters?      @relation(fields: [merek_id], references: [id], onDelete: Restrict, map: "pelanggan_ibfk_8")
-  kolektif         kolektif           @relation(fields: [kolektif_id], references: [id], map: "pelanggan_ibfk_9")
+  kolektif         kolektif?          @relation(fields: [kolektif_id], references: [id], onDelete: Restrict, map: "pelanggan_ibfk_9")
   pendaftaran_lain pendaftaran_lain[]
   pengaduan        pengaduan[]
 
@@ -803,6 +813,7 @@ model users {
   role_id                                                 Int?
   is_user_ppob                                            Boolean
   is_active                                               Boolean
+  is_user_timtagih                                        Boolean?
   angsuran                                                angsuran[]
   pasangbaru_pasangbaru_user_inputTousers                 pasangbaru[]        @relation("pasangbaru_user_inputTousers")
   pasangbaru_pasangbaru_user_setujuTousers                pasangbaru[]        @relation("pasangbaru_user_setujuTousers")
