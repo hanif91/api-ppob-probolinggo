@@ -100,7 +100,7 @@ export async function GET(req: NextRequest) {
     } 
 
 
-    const isPassCompare =  bcrypt.compareSync(passAuth, isUser.password);
+    const isPassCompare = await bcrypt.compare(passAuth, isUser.password);
 
     if (!isPassCompare) {
       return NextResponse.json(
