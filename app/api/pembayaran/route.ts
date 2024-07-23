@@ -3,8 +3,11 @@ import { Prisma } from "@prisma/client";
 import prismadb from "@/lib/prismadb";
 import { cookies } from 'next/headers'
 import { verifyAuth } from '@/lib/auth';
-import bcrypt from "bcrypt";
 
+import bcrypt from "bcrypt";
+export const maxDuration = 30; // This function can run for a maximum of 5 seconds
+export const dynamic = 'force-dynamic';
+ 
 export async function POST(req: NextRequest) { 
   try {
     const body = await req.json();
@@ -234,7 +237,7 @@ export async function POST(req: NextRequest) {
 
     const tgl : any = await prismadb.$queryRaw`Select now() as tgl`;
 
-    console.log(tgl);
+    // console.log(tgl);
 
     for (const dataTag of datatagihan) {
       const dendatunggakan = parseInt(dataTag.f23)+parseInt(dataTag.f24);
