@@ -733,6 +733,13 @@ model setup_ppn {
   mulaitgl DateTime? @db.Date
 }
 
+model cutoff_ppob {
+  id       Int       @id @default(autoincrement())
+  start    DateTime? @db.Date
+  end      DateTime? @db.Date
+  aktif    Boolean   @default(true)
+}
+
 model sktarif {
   id         Int        @id @default(autoincrement()) @db.TinyInt
   tahun      Int

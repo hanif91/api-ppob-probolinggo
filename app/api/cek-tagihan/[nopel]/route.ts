@@ -4,6 +4,8 @@ import prismadb from "@/lib/prismadb";
 import { cookies } from 'next/headers'
 import { verifyAuth } from '@/lib/auth';
 import bcrypt from "bcrypt";
+import moment from "moment";
+import { start } from "repl";
 
 export async function GET(req: NextRequest) { 
   try {
@@ -154,6 +156,40 @@ export async function GET(req: NextRequest) {
         ,{status : 200})        
     }
     
+
+    // const formatdate=formatter.format(new Date());\
+    const currentDate = new Date();
+    const mom = moment.utc(`${currentDate}+07:00`).format();
+    const currentDateFix = new Date(mom.slice(0,10))
+
+    const cutoff = await prismadb.cutoff_ppob.findFirst(
+      {
+        where : {
+          start : {
+            lte : currentDateFix
+          },
+          end : {
+            gte : currentDateFix
+          }
+        }
+      }
+    )
+
+    if (cutoff) {
+      return NextResponse.json(
+        {
+          rescode : 299,
+          success : false,
+          message : "Saat Ini Sedang Masa Cutoff",
+          data : {
+            nopel : nopel || ""
+          }
+        }
+
+        ,{status : 200})  
+    }
+
+    console.log(cutoff);
     const datatagihan : any[] = await prismadb.$queryRaw(
       Prisma.sql`call infotag(${nopel})` 
     )

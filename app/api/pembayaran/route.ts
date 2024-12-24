@@ -5,6 +5,7 @@ import { cookies } from 'next/headers'
 import { verifyAuth } from '@/lib/auth';
 
 import bcrypt from "bcrypt";
+import moment from "moment";
 export const maxDuration = 30; // This function can run for a maximum of 5 seconds
 export const dynamic = 'force-dynamic';
  
@@ -165,6 +166,36 @@ export async function POST(req: NextRequest) {
         ,{status : 200})        
     }
     
+    const currentDate = new Date();
+    const mom = moment.utc(`${currentDate}+07:00`).format();
+    const currentDateFix = new Date(mom.slice(0,10))
+
+    const cutoff = await prismadb.cutoff_ppob.findFirst(
+      {
+        where : {
+          start : {
+            lte : currentDateFix
+          },
+          end : {
+            gte : currentDateFix
+          }
+        }
+      }
+    )
+
+    if (cutoff) {
+      return NextResponse.json(
+        {
+          rescode : 299,
+          success : false,
+          message : "Saat Ini Sedang Masa Cutoff",
+          data : {
+            nopel : body.no_pelanggan || "" 
+          }
+        }
+
+        ,{status : 200})  
+    }
     
 
     const datatagihan : any[] = await prismadb.$queryRaw(
